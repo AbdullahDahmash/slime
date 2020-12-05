@@ -37,6 +37,24 @@ defmodule ParserTest do
     ]
   end
 
+  test  "special charcter in class names" do
+    slime = """
+    .relative.sm:pb-16.md:pb-20.lg:pb-28
+    """
+    refute parse(slime) == [
+      %HTMLNode{name: "div", attributes: [{"class", "relative sm"}], children: [
+        %HTMLNode{name: "pb-16", attributes: [{"class", "md"}], children: [
+          %HTMLNode{name: "pb-20", attributes: [{"class", "lg"}], children: [
+            %HTMLNode{name: "pb-28"}
+          ]}
+        ]}
+      ]}
+    ]
+    assert parse(slime) == [
+      %HTMLNode{name: "div", attributes: [{"class", "relative sm:pb-16 md:pb-20 lg:pb-28"}]}
+    ]
+  end
+
   test "inline tags" do
     slime = """
     .wrap: .row: .col-lg-12
